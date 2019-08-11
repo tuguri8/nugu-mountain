@@ -1,0 +1,44 @@
+plugins {
+    id 'org.springframework.boot' version '2.1.7.RELEASE'
+    id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'nugu.mountain'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'org.springframework.boot:spring-boot-devtools'
+
+    // feign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:2.1.1.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon:2.1.1.RELEASE'
+    implementation 'io.github.openfeign:feign-jaxb:9.3.1'
+    implementation 'io.github.openfeign:feign-jackson:9.3.1'
+
+    implementation 'com.google.guava:guava:23.0'
+    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.apache.commons:commons-collections4:4.3'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
+    implementation 'org.modelmapper:modelmapper:2.3.0'
+
+    testCompile group: 'com.h2database', name: 'h2'
+
+    runtime 'com.h2database:h2'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+}
