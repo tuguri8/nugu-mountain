@@ -11,3 +11,19 @@ spring:
     console:
       enabled: true
       path: /h2-console
+ribbon:
+  eureka:
+    enabled: false
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 3000
+        readTimeout: 3000
+        loggerLevel: basic
+
+mountain-client:
+  key: '{cipher}d762f3f868f483eafa2af57e9b85e0d47264d4493182f80b1dd903fae4364690c18230ffa6397350bfc891278dc81eb6cdc45cf1f6203383ff2acbae57758a47fd504525ef127dc32d613aedb6812da40fe54f1e0db7e48d07a06398ad96607d7c4e919088b8bfa2f670f97a5aa282e9167dae06d4493d863c1e0d267588eb4b'
+  ribbon:
+    listOfServers: http://openapi.forest.go.kr
