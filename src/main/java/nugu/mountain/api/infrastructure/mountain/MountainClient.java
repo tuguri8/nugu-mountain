@@ -9,7 +9,6 @@ public interface MountainClient {
     @GetMapping(value = "/openapi/service/cultureInfoService/gdTrailInfoOpenAPI", headers = "Accept=application/xml")
     MountainResponse getMountain(@RequestParam("serviceKey") String serviceKey,
                                  @RequestParam("searchMtNm") String searchMtNm,
-                                 @RequestParam("searchArNm") String searchArNm,
                                  @RequestParam("pageNo") String pageNo,
                                  @RequestParam("numOfRows") String numOfRows);
 }

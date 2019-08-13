@@ -5,6 +5,7 @@ import feign.Retryer;
 import feign.jaxb.JAXBContextFactory;
 import feign.jaxb.JAXBDecoder;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import static org.apache.commons.lang.CharEncoding.UTF_8;
 
 @EnableFeignClients
+@EnableAutoConfiguration
 @Configuration
 public class InfrastructureConfig {
 

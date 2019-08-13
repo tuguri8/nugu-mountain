@@ -12,7 +12,7 @@ public class SampleController {
     public SampleController(MountainService mountainService) {this.mountainService = mountainService;}
 
     @GetMapping("/api/test")
-    public MountainResponse apiTest() {
-        return mountainService.getMountain();
+    public void apiTest() {
+        mountainService.getMountain();
     }
 }
