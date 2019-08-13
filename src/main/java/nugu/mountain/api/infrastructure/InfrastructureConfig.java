@@ -5,6 +5,7 @@ import feign.Retryer;
 import feign.jaxb.JAXBContextFactory;
 import feign.jaxb.JAXBDecoder;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
+import nugu.mountain.api.infrastructure.sk.SkClient;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.openfeign.support.SpringMvcContract;
@@ -27,5 +28,13 @@ public class InfrastructureConfig {
                     .contract(new SpringMvcContract())
                     .retryer(new Retryer.Default())
                     .target(MountainClient.class, "mountain-client");
+    }
+
+    @Bean
+    public SkClient SkClient() {
+        return Feign.builder()
+                    .contract(new SpringMvcContract())
+                    .retryer(new Retryer.Default())
+                    .target(SkClient.class, "sk-client");
     }
 }

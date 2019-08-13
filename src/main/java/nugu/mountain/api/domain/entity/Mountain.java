@@ -54,6 +54,12 @@ public class Mountain {
     @Column(name = "ETC_COURSE")
     private String etcCourse;
 
+    @Column(name = "LAT")
+    private String lat;
+
+    @Column(name = "LON")
+    private String lon;
+
     public static long getSerialVersionUID() {
         return serialVersionUID;
     }
@@ -152,5 +158,21 @@ public class Mountain {
 
     public void setEtcCourse(String etcCourse) {
         this.etcCourse = etcCourse;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
     }
 }

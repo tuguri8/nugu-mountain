@@ -5,13 +5,14 @@ import nugu.mountain.api.domain.entity.Mountain;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
 import nugu.mountain.api.infrastructure.mountain.MountainResponse;
 import nugu.mountain.api.infrastructure.repository.MountainRepository;
+import nugu.mountain.api.infrastructure.sk.GeocodingResponse;
+import nugu.mountain.api.infrastructure.sk.SkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,14 +20,20 @@ import java.util.stream.Collectors;
 public class MountainServicempl implements MountainService {
     @Value("${mountain-client.key}")
     String key;
+
+    @Value("${sk-client.key}")
+    String skKey;
+
     private final MountainClient mountainClient;
     private final MountainRepository mountainRepository;
+    private final SkClient skClient;
     private static final Logger log = LoggerFactory.getLogger(MountainServicempl.class);
 
     public MountainServicempl(MountainClient mountainClient,
-                              MountainRepository mountainRepository) {
+                              MountainRepository mountainRepository, SkClient skClient) {
         this.mountainClient = mountainClient;
         this.mountainRepository = mountainRepository;
+        this.skClient = skClient;
     }
 
     @Override
@@ -53,6 +60,29 @@ public class MountainServicempl implements MountainService {
                                                           .collect(Collectors.toList());
         log.info("산 정보 저장 완료 : " + mountainList.size() + " 개");
         mountainRepository.saveAll(mountainList);
+    }
+
+    @Override
+    public void geocoding() {
+        List<Mountain> mountainList = mountainRepository.findAll();
+        for (Mountain mountain : mountainList) {
+            try {
+                String geocodingKeyword = mountain.getMntArea();
+                geocodingKeyword = Arrays.stream(geocodingKeyword.split(","))
+                                         .filter(x -> x.split(" ").length > 1)
+                                         .findFirst()
+                                         .orElse(geocodingKeyword);
+                GeocodingResponse geocodingResponse = skClient.geocoding(skKey, "1", geocodingKeyword);
+                mountain.setLat(geocodingResponse.getCoordinateInfo().getCoordinate().get(0).getLat());
+                mountain.setLon(geocodingResponse.getCoordinateInfo().getCoordinate().get(0).getLon());
+                mountainRepository.save(mountain);
+                log.info(mountain.getMntName() + "에 대한 lat, lon 저장 완료");
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                log.info(e.getMessage());
+            }
+        }
     }
 
     private Mountain transform(MountainResponse mountainResponse) {
