@@ -22,7 +22,7 @@ feign:
     config:
       default:
         connectTimeout: 3000
-        readTimeout: 3000
+        readTimeout: 10000
         loggerLevel: basic
 
 mountain-client:
@@ -34,3 +34,8 @@ sk-client:
   key: '{cipher}56b651d25e1c1c93ed625749f45633af7babc4097ae3220653ed67dded462c69d796e530f8d18fc8c7a1d101fef369455528eabd1df6e42d9aaf5ba00db6a06b'
   ribbon:
     listOfServers: https://apis.openapi.sk.com
+
+nifos-client:
+  key: '{cipher}7daee8a0847e442689b27987e043a200774d86599689c31043b4dc7db882673d96d9ed334aaa71e4b2901d49d0076bf10b1e19b0762eebefdc87131c09061ec7941fecfdeacf278e9c09dd13c810c9cb'
+  ribbon:
+    listOfServers: http://know.nifos.go.kr

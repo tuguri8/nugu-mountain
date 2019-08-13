@@ -5,6 +5,7 @@ import feign.Retryer;
 import feign.jaxb.JAXBContextFactory;
 import feign.jaxb.JAXBDecoder;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
+import nugu.mountain.api.infrastructure.nifos.NifosClient;
 import nugu.mountain.api.infrastructure.sk.SkClient;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -36,5 +37,13 @@ public class InfrastructureConfig {
                     .contract(new SpringMvcContract())
                     .retryer(new Retryer.Default())
                     .target(SkClient.class, "sk-client");
+    }
+
+    @Bean
+    public NifosClient NifosClient() {
+        return Feign.builder()
+                    .contract(new SpringMvcContract())
+                    .retryer(new Retryer.Default())
+                    .target(NifosClient.class, "nifos-client");
     }
 }
