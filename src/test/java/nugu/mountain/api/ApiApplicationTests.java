@@ -15,7 +15,7 @@ public class ApiApplicationTests {
     private static final Logger log = LoggerFactory.getLogger(ApiApplicationTests.class);
 
     @Test
-    public void 지역명() {
+    public void 지역명_테스트() {
         String str = "울산광역시, 경상북도 청도군, 경상남도 밀양시";
         str = Arrays.stream(str.split(",")).filter(x -> x.split(" ").length > 1).findFirst().orElse(str);
         log.info(str);

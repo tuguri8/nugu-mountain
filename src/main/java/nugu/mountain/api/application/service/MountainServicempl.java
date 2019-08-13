@@ -5,7 +5,7 @@ import nugu.mountain.api.domain.entity.Mountain;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
 import nugu.mountain.api.infrastructure.mountain.MountainResponse;
 import nugu.mountain.api.infrastructure.repository.MountainRepository;
-import nugu.mountain.api.infrastructure.sk.GeocodingResponse;
+import nugu.mountain.api.infrastructure.sk.dto.GeocodingResponse;
 import nugu.mountain.api.infrastructure.sk.SkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

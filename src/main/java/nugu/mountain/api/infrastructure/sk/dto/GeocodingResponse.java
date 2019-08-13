@@ -1,4 +1,4 @@
-package nugu.mountain.api.infrastructure.sk;
+package nugu.mountain.api.infrastructure.sk.dto;
 
 import java.util.List;
 
