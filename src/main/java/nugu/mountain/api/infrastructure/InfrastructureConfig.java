@@ -4,6 +4,7 @@ import feign.Feign;
 import feign.Retryer;
 import feign.jaxb.JAXBContextFactory;
 import feign.jaxb.JAXBDecoder;
+import nugu.mountain.api.infrastructure.airkorea.AirkoreaClient;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
 import nugu.mountain.api.infrastructure.nifos.NifosClient;
 import nugu.mountain.api.infrastructure.sk.SkClient;
@@ -42,8 +43,22 @@ public class InfrastructureConfig {
     @Bean
     public NifosClient NifosClient() {
         return Feign.builder()
+                    .decoder(new JAXBDecoder(new JAXBContextFactory.Builder()
+                                                 .withMarshallerJAXBEncoding(UTF_8)
+                                                 .build()))
                     .contract(new SpringMvcContract())
                     .retryer(new Retryer.Default())
                     .target(NifosClient.class, "nifos-client");
+    }
+
+    @Bean
+    public AirkoreaClient AirkoreaClient() {
+        return Feign.builder()
+                    .decoder(new JAXBDecoder(new JAXBContextFactory.Builder()
+                                                 .withMarshallerJAXBEncoding(UTF_8)
+                                                 .build()))
+                    .contract(new SpringMvcContract())
+                    .retryer(new Retryer.Default())
+                    .target(AirkoreaClient.class, "airkorea-client");
     }
 }

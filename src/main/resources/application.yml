@@ -39,3 +39,8 @@ nifos-client:
   key: '{cipher}7daee8a0847e442689b27987e043a200774d86599689c31043b4dc7db882673d96d9ed334aaa71e4b2901d49d0076bf10b1e19b0762eebefdc87131c09061ec7941fecfdeacf278e9c09dd13c810c9cb'
   ribbon:
     listOfServers: http://know.nifos.go.kr
+
+airkorea-client:
+  key: '{cipher}8c23a9e57d4108ea2e37873476936d3429d8639c2d310473fe78db71f4409d8f808b82d81cd53a5efde5ab47879d74c6093bd6bcc7a840a72d6848f1e0c3d810944db88bafa6eee0a985282e9bf36d82c1292d586719a72dca9718c036ff32709e9c2d007eaeda3e2af766f3661b9655c595f44c4574f67fec4df2a04ab4d981'
+  ribbon:
+    listOfServers: http://openapi.airkorea.or.kr
