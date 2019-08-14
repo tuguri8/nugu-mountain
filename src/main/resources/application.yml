@@ -1,16 +1,18 @@
 server:
   port: 8080
 spring:
+  main:
+    allow-bean-definition-overriding: true
   datasource:
     platform: h2
     url: jdbc:h2:mem:mountain;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
-    #    url: jdbc:h2:tcp://localhost/~/test;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL
     username: sa
-    initialize-mode: always
+    initialization-mode: EMBEDDED
   h2:
     console:
       enabled: true
       path: /h2-console
+
 ribbon:
   eureka:
     enabled: false
@@ -20,10 +22,25 @@ feign:
     config:
       default:
         connectTimeout: 3000
-        readTimeout: 3000
+        readTimeout: 10000
         loggerLevel: basic
 
 mountain-client:
-  key: '{cipher}d762f3f868f483eafa2af57e9b85e0d47264d4493182f80b1dd903fae4364690c18230ffa6397350bfc891278dc81eb6cdc45cf1f6203383ff2acbae57758a47fd504525ef127dc32d613aedb6812da40fe54f1e0db7e48d07a06398ad96607d7c4e919088b8bfa2f670f97a5aa282e9167dae06d4493d863c1e0d267588eb4b'
+  key: '{cipher}c770ec4b8f4dbcfeb82407e67f3f9e343a0d7a11294889eca79a532508e04c8c9ac15cf9f759c4a4101eee8b83ceae78d63f167584b993e4efa9657dc0c5a3a71976cd8e2a4905e14252652d13a11137fc78b4932e3d5728f680e230cf8c5e72dcd7842f16ebabd72ff9142f67af4db3d389a9aa2c12408c4756548fa4291d35'
   ribbon:
     listOfServers: http://openapi.forest.go.kr
+
+sk-client:
+  key: '{cipher}56b651d25e1c1c93ed625749f45633af7babc4097ae3220653ed67dded462c69d796e530f8d18fc8c7a1d101fef369455528eabd1df6e42d9aaf5ba00db6a06b'
+  ribbon:
+    listOfServers: https://apis.openapi.sk.com
+
+nifos-client:
+  key: '{cipher}7daee8a0847e442689b27987e043a200774d86599689c31043b4dc7db882673d96d9ed334aaa71e4b2901d49d0076bf10b1e19b0762eebefdc87131c09061ec7941fecfdeacf278e9c09dd13c810c9cb'
+  ribbon:
+    listOfServers: http://know.nifos.go.kr
+
+airkorea-client:
+  key: '{cipher}8c23a9e57d4108ea2e37873476936d3429d8639c2d310473fe78db71f4409d8f808b82d81cd53a5efde5ab47879d74c6093bd6bcc7a840a72d6848f1e0c3d810944db88bafa6eee0a985282e9bf36d82c1292d586719a72dca9718c036ff32709e9c2d007eaeda3e2af766f3661b9655c595f44c4574f67fec4df2a04ab4d981'
+  ribbon:
+    listOfServers: http://openapi.airkorea.or.kr

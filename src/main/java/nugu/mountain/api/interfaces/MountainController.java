@@ -6,13 +6,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class SampleController {
+public class MountainController {
     private final MountainService mountainService;
 
-    public SampleController(MountainService mountainService) {this.mountainService = mountainService;}
+    public MountainController(MountainService mountainService) {this.mountainService = mountainService;}
 
-    @GetMapping("/api/test")
-    public MountainResponse apiTest() {
-        return mountainService.getMountain();
+    @GetMapping("/api/info")
+    public void getMountain() {
+        mountainService.getMountain();
+    }
+
+    @GetMapping("/api/geo")
+    public void geocoding() {
+        mountainService.geocoding();
     }
 }
