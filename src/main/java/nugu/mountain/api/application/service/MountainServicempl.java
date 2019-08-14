@@ -1,6 +1,7 @@
 package nugu.mountain.api.application.service;
 
 import com.google.common.collect.Lists;
+import nugu.mountain.api.domain.entity.Area;
 import nugu.mountain.api.domain.entity.Mountain;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
 import nugu.mountain.api.infrastructure.mountain.MountainResponse;
@@ -75,6 +76,8 @@ public class MountainServicempl implements MountainService {
                 GeocodingResponse geocodingResponse = skClient.geocoding(skKey, "1", geocodingKeyword);
                 mountain.setLat(geocodingResponse.getCoordinateInfo().getCoordinate().get(0).getLat());
                 mountain.setLon(geocodingResponse.getCoordinateInfo().getCoordinate().get(0).getLon());
+                // Enum에서 지역코드 받아와서 추가
+                mountain.setAreaCode(Area.findBykoName(geocodingKeyword.split(" ")[0]).getCode());
                 mountainRepository.save(mountain);
                 log.info(mountain.getMntName() + "에 대한 lat, lon 저장 완료");
                 Thread.sleep(500);

@@ -27,8 +27,8 @@ public class Mountain {
     @Column(name = "MNT_AREA")
     private String mntArea;
 
-//    @Column(name = "AREA_CODE")
-//    private String areaCode;
+    @Column(name = "AREA_CODE")
+    private String areaCode;
 
     @Column(name = "MNT_HEIGHT")
     private Integer mntHeight;
@@ -179,11 +179,11 @@ public class Mountain {
         this.lon = lon;
     }
 
-//    public String getAreaCode() {
-//        return areaCode;
-//    }
-//
-//    public void setAreaCode(String areaCode) {
-//        this.areaCode = areaCode;
-//    }
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
 }
