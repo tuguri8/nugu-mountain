@@ -3,16 +3,23 @@ package nugu.mountain.api.application.service;
 import com.google.common.collect.Lists;
 import nugu.mountain.api.domain.entity.Area;
 import nugu.mountain.api.domain.entity.Mountain;
+import nugu.mountain.api.domain.entity.MountainFire;
 import nugu.mountain.api.infrastructure.mountain.MountainClient;
 import nugu.mountain.api.infrastructure.mountain.MountainResponse;
+import nugu.mountain.api.infrastructure.nifos.NifosClient;
+import nugu.mountain.api.infrastructure.nifos.NifosMountainFireResponse;
+import nugu.mountain.api.infrastructure.repository.MountainFireRepository;
 import nugu.mountain.api.infrastructure.repository.MountainRepository;
 import nugu.mountain.api.infrastructure.sk.dto.GeocodingResponse;
 import nugu.mountain.api.infrastructure.sk.SkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,16 +32,25 @@ public class MountainServicempl implements MountainService {
     @Value("${sk-client.key}")
     String skKey;
 
+    @Value("${nifos-client.key}")
+    String nifosKey;
+
     private final MountainClient mountainClient;
     private final MountainRepository mountainRepository;
+    private final MountainFireRepository mountainFireRepository;
     private final SkClient skClient;
+    private final NifosClient nifosClient;
     private static final Logger log = LoggerFactory.getLogger(MountainServicempl.class);
 
     public MountainServicempl(MountainClient mountainClient,
-                              MountainRepository mountainRepository, SkClient skClient) {
+                              MountainRepository mountainRepository,
+                              MountainFireRepository mountainFireRepository, SkClient skClient,
+                              NifosClient nifosClient) {
         this.mountainClient = mountainClient;
         this.mountainRepository = mountainRepository;
+        this.mountainFireRepository = mountainFireRepository;
         this.skClient = skClient;
+        this.nifosClient = nifosClient;
     }
 
     @Override
@@ -89,8 +105,38 @@ public class MountainServicempl implements MountainService {
     }
 
     @Override
+    @Scheduled(cron = "0 5 17 * * *")
     public void syncMountainFire() {
+        List<String> areaList = Area.getAllAreaCode();
+        List<MountainFire> mountainFireList = areaList.stream()
+                                                      .map(this::getMountainFireRateFromArea)
+                                                      .collect(Collectors.toList());
+        mountainFireRepository.saveAll(mountainFireList);
+        log.info("산불위험 DB 저장 완료 : " + mountainFireList.size() + " 개");
+    }
 
+    private MountainFire getMountainFireRateFromArea(String areaCode) {
+        NifosMountainFireResponse nifosMountainFireResponse = nifosClient.getMountainFireRate(nifosKey, areaCode, "sido", "1.1", "1");
+        NifosMountainFireResponse.Items items = nifosMountainFireResponse.getOutputData().getItems();
+        MountainFire mountainFire = new MountainFire();
+        mountainFire.setAreaCode(areaCode);
+        mountainFire.setAnalDate(LocalDateTime.parse(items.getAnaldate(), DateTimeFormatter.ofPattern("yyyy/MM/dd/HH")));
+        mountainFire.setMeanAvg(items.getMeanavg());
+        mountainFire.setGrade(getFireGradeFromAvg(items.getMeanavg()));
+        return mountainFire;
+    }
+
+    private String getFireGradeFromAvg(String meanAvg) {
+        Double meanAvgValue = Double.valueOf(meanAvg);
+        String grade = "낮음";
+        if (meanAvgValue > 85) {
+            grade = "매우높음";
+        } else if (meanAvgValue > 65) {
+            grade = "높음";
+        } else if (meanAvgValue > 50) {
+            grade = "보통";
+        }
+        return grade;
     }
 
     private Mountain transform(MountainResponse mountainResponse) {

@@ -1,6 +1,8 @@
 package nugu.mountain.api.domain.entity;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public enum Area {
     SEOUL("서울특별시", "11", "seoul"),
@@ -64,5 +66,14 @@ public enum Area {
                      .filter(area -> enName.equals(area.getEnName()))
                      .findAny()
                      .orElse(UNKNOWN);
+    }
+
+    public static List<String> getAllAreaCode() {
+        return Arrays.stream(Area.values())
+                     .map(Area::getCode)
+                     .collect(Collectors.toList())
+                     .stream()
+                     .distinct()
+                     .collect(Collectors.toList());
     }
 }
