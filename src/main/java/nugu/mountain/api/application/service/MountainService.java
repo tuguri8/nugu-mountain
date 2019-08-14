@@ -6,4 +6,6 @@ public interface MountainService {
     void getMountain();
 
     void geocoding();
+
+    void syncMountainFire();
 }

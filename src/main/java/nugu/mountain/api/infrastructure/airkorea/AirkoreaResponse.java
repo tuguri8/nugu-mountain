@@ -14,6 +14,14 @@ public class AirkoreaResponse {
     @XmlElement(name = "body")
     private Body body;
 
+    public Header getHeader() {
+        return header;
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Header {
         @XmlElement(name = "resultCode")

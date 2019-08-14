@@ -1,14 +1,17 @@
 package nugu.mountain.api.domain.entity;
 
+import nugu.mountain.api.domain.common.BaseEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.io.Serializable;
 
 @Entity
-public class Mountain {
+public class Mountain extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -14238791237843141L;
 
     @Id

@@ -61,7 +61,7 @@ public enum Area {
 
     public static Area findByenName(String enName) {
         return Arrays.stream(Area.values())
-                     .filter(area -> enName.equals(area.getKoName()))
+                     .filter(area -> enName.equals(area.getEnName()))
                      .findAny()
                      .orElse(UNKNOWN);
     }

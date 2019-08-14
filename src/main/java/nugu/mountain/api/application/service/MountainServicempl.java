@@ -88,6 +88,11 @@ public class MountainServicempl implements MountainService {
         }
     }
 
+    @Override
+    public void syncMountainFire() {
+
+    }
+
     private Mountain transform(MountainResponse mountainResponse) {
         MountainResponse.Item item = mountainResponse.getBody().getItems().getItem().get(0);
         Mountain mountain = new Mountain();
