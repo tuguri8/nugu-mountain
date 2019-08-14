@@ -1,0 +1,29 @@
+spring:
+
+  jpa:
+    database: MYSQL
+    showSql: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      hibernate.format_sql: true
+      hibernate.use_sql_comments: true
+
+  datasource:
+    url: '{cipher}004ff7a40a09a2b3b9e2057dea2924ebab0aede242f13d590b074187ff754918058c8b87155b459f1452092709103fbae514649a50883fcd0e79e6fe5e577445f5f806d12ea96721ec4d7bc7b49a1f56c6b1e64cf477f2b3ccfba97f9c8b6abee5b8ba79ef45a8f87b65cfce81e9ce51eb58da566e35663169b710e0408d45a7a5352ea4ef57dba5bdeccb1adaf344cd'
+    username: '{cipher}1c1f133c497d819ec8d7ed984fc8d34f6b1985e9ae1c99413e5e8632b9cc9f42'
+    password: '{cipher}1277512b08597c5a03eedc42726f9bc50764799a457f58ea540566e141182f8c'
+    driverClassName: org.mariadb.jdbc.Driver
+    initialization-mode: NEVER
+
+    hikari:
+      maximum-pool-size: 200
+      connection-timeout: 2000
+      connection-test-query: SELECT 1
+      validation-timeout: 5000
+      data-source-properties:
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        cachePrepStmts: true
+        useServerPrepStmts: true

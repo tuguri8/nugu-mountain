@@ -33,6 +33,7 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine'
 
     implementation 'org.modelmapper:modelmapper:2.3.0'
+    compile group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.4.0'
 
     testCompile group: 'com.h2database', name: 'h2'
 
