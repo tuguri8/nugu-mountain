@@ -10,12 +10,12 @@ import nugu.mountain.api.infrastructure.repository.MountainRepository;
 import nugu.mountain.api.infrastructure.sk.SkClient;
 import nugu.mountain.api.infrastructure.sk.dto.WeatherSummaryResponse;
 import nugu.mountain.api.interfaces.dto.response.NuguResponse;
-import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +64,7 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntCourseAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultCourse", mountain.getEtcCourse().replaceAll("<BR>", ""));
+        map.put("resultCourse", mountain.getEtcCourse());
         return sendToNugu(map);
     }
 
@@ -76,7 +76,7 @@ public class NuguServicempl implements NuguService {
         Map<String, String> map = new HashMap<String, String>();
         map.put("resultAirValue", air.getAirValue().toString());
         map.put("resultAirGrade", getAirGradeFromValue(air.getAirValue()));
-        map.put("resultAirDate", air.getDataTime().toString());
+        map.put("resultAirDate", air.getDataTime().format(DateTimeFormatter.ofPattern("M월dd일 H시")));
         return sendToNugu(map);
     }
 
@@ -91,11 +91,11 @@ public class NuguServicempl implements NuguService {
                 String.format("%s의 일기예보를 알려드릴게요!, 오늘의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다. 내일의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다.",
                               mountain.getMntName(),
                               summary.getToday().getSky().getName(),
-                              summary.getToday().getTemperature().getTmax(),
-                              summary.getToday().getTemperature().getTmin(),
+                              summary.getToday().getTemperature().getTmax() + "도",
+                              summary.getToday().getTemperature().getTmin() + "도",
                               summary.getTomorrow().getSky().getName(),
-                              summary.getTomorrow().getTemperature().getTmax(),
-                              summary.getTomorrow().getTemperature().getTmin()));
+                              summary.getTomorrow().getTemperature().getTmax() + "도",
+                              summary.getTomorrow().getTemperature().getTmin() + "도"));
         return sendToNugu(map);
     }
 
@@ -107,7 +107,7 @@ public class NuguServicempl implements NuguService {
         Map<String, String> map = new HashMap<String, String>();
         map.put("resultFireValue", mountainFire.getMeanAvg());
         map.put("resultFireGrade", mountainFire.getGrade());
-        map.put("resultAirDate", mountainFire.getAnalDate().toString());
+        map.put("resultFireDate", mountainFire.getAnalDate().format(DateTimeFormatter.ofPattern("M월dd일 H시")));
         return sendToNugu(map);
     }
 
@@ -115,7 +115,7 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntTourInfoAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultTour", mountain.getTourismInfo().replaceAll("<BR>", ""));
+        map.put("resultTour", mountain.getTourismInfo());
         return sendToNugu(map);
     }
 
@@ -123,7 +123,7 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntTransportAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultTransport", mountain.getTransport().replaceAll("<BR>", ""));
+        map.put("resultTransport", mountain.getTransport());
         return sendToNugu(map);
     }
 
@@ -139,7 +139,7 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntReasonAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultReason", Jsoup.parse(mountain.getReason()).text());
+        map.put("resultReason", mountain.getReason());
         return sendToNugu(map);
     }
 
@@ -147,7 +147,7 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntOverviewAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultReason", Jsoup.parse(mountain.getReason()).text());
+        map.put("resultOverview", mountain.getReason());
         return sendToNugu(map);
     }
 
