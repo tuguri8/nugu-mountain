@@ -31,7 +31,7 @@ public class NuguServicempl implements NuguService {
 
     @Override
     public NuguResponse getMntInfoAction(JsonNode parameters) {
-        String mntName = parameters.get("name").get("value").asText();
+        String mntName = parameters.get("mountain").get("value").asText();
         Mountain mountain = mountainRepository.findByMntName(mntName).orElseThrow(() -> new RuntimeException("해당 산이 존재하지 않습니다"));
         Map<String, String> map = new HashMap<String, String>();
         map.put("resultText", mountain.getSubName() + " " + mntName + "에 대해 궁금하시군요! 산 높이, 등산 코스 정보, 날씨, 미세먼지, 산불위험지수, 100대명산 선정이유, 대중교통정보, 주변관광정보, 산정보개관 중 어떤게 궁금하세요?");
