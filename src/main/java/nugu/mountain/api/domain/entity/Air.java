@@ -14,21 +14,24 @@ import java.time.LocalDateTime;
 public class Air extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -14238791237843142L;
 
+    public Air() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "AREA_CODE")
-    private final String areaCode;
+    private String areaCode;
 
     @Column(name = "ITEM_CODE")
-    private final String itemCode;
+    private String itemCode;
 
     @Column(name = "AIR_VALUE")
-    private final Integer airValue;
+    private Integer airValue;
 
     @Column(name = "DATA_TIME")
-    private final LocalDateTime dataTime;
+    private LocalDateTime dataTime;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
