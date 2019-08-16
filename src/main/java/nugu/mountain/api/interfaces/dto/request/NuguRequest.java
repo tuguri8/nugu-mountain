@@ -28,6 +28,7 @@ public class NuguRequest {
         return context;
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Action {
         private String actionName;
         private Map<String, Object> parameters;
@@ -41,6 +42,7 @@ public class NuguRequest {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Event {
         private String type;
 
@@ -63,6 +65,7 @@ public class NuguRequest {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Session {
         private String id;
         @JsonProperty(value="isNew")
@@ -83,6 +86,7 @@ public class NuguRequest {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Device {
         private String type;
 
