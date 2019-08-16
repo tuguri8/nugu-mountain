@@ -28,7 +28,7 @@ public class NuguServicempl implements NuguService {
         nuguResponse.setVersion("2.0");
         nuguResponse.setResultCode("OK");
         Map<String, String> map = new HashMap<String, String>();
-        map.put("name", result);
+        map.put("resultName", result);
         nuguResponse.setOutput(map);
         return nuguResponse;
     }
