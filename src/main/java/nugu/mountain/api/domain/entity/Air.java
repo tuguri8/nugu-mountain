@@ -30,6 +30,30 @@ public class Air extends BaseEntity implements Serializable {
     @Column(name = "DATA_TIME")
     private final LocalDateTime dataTime;
 
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public String getItemCode() {
+        return itemCode;
+    }
+
+    public Integer getAirValue() {
+        return airValue;
+    }
+
+    public LocalDateTime getDataTime() {
+        return dataTime;
+    }
+
     public static class Builder {
         private final String areaCode;
         private final Integer airvalue;
