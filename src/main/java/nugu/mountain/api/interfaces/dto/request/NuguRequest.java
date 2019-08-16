@@ -1,5 +1,7 @@
 package nugu.mountain.api.interfaces.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Map;
 
 public class NuguRequest {
@@ -60,13 +62,20 @@ public class NuguRequest {
 
     public static class Session {
         private String id;
-        private String isNew;
+        @JsonProperty(value="isNew")
+        private Boolean isNew;
+        @JsonProperty(value="isPlayBuilderRequest")
+        private Boolean isPlayBuilderRequest;
+
+        public Boolean getPlayBuilderRequest() {
+            return isPlayBuilderRequest;
+        }
 
         public String getId() {
             return id;
         }
 
-        public String getIsNew() {
+        public Boolean getNew() {
             return isNew;
         }
     }
