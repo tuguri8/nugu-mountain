@@ -1,8 +1,5 @@
 package nugu.mountain.api.interfaces.dto.request;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-
 import java.util.Map;
 
 public class NuguRequest {
