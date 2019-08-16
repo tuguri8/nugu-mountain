@@ -49,6 +49,7 @@ public class NuguRequest {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Context {
         private Session session;
         private Device device;
