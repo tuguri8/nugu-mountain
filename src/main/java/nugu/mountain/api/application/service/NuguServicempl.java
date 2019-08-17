@@ -167,7 +167,7 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntClimbingCondition(JsonNode parametersFromNuguRequest) {
         Mountain mountain = mountainService.getMountainFromName(parametersFromNuguRequest.get("mountain").get("value").asText());
         log.info("로그 " + parametersFromNuguRequest.asText());
-        String dayParameter = parametersFromNuguRequest.get("BID_DT_DAY").get("type").asText();
+        String dayParameter = parametersFromNuguRequest.get("BID_DT_DAY").get("value").asText();
         Air air = weatherService.getAirFromAreaCode(mountain.getAreaCode());
         MountainFire mountainFire = mountainService.getMountainFireFromAreaCode(mountain.getAreaCode());
         WeatherSummaryResponse.Summary summary = weatherService.getWeatherSummary(mountain.getLat(), mountain.getLon());
@@ -188,7 +188,8 @@ public class NuguServicempl implements NuguService {
     private boolean getTempCondition(String dayParameter, WeatherSummaryResponse.Summary summary) {
         String temp = "1";
         switch (dayParameter) {
-            case "BID_DT_DAY.TODAY":
+//            case "BID_DT_DAY.TODAY":
+            case "오늘":
                 temp = summary.getToday().getTemperature().getTmax();
                 break;
             case "BID_DT_DAY.TOMORROW":
