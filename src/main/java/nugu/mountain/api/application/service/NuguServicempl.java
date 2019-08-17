@@ -205,7 +205,8 @@ public class NuguServicempl implements NuguService {
     private boolean getSkyCondition(String dayParameter, WeatherSummaryResponse.Summary summary) {
         String skyName = "맑음";
         switch (dayParameter) {
-            case "BID_DT_DAY.TODAY":
+//            case "BID_DT_DAY.TODAY":
+            case "오늘":
                 skyName = summary.getToday().getSky().getName();
                 break;
             case "BID_DT_DAY.TOMORROW":

@@ -7,7 +7,7 @@ import nugu.mountain.api.infrastructure.sk.dto.WeatherSummaryResponse;
 import java.util.Arrays;
 
 public enum ClimbCondition {
-    TODAY_OK("BID_DT_DAY.TODAY", false, false, false, false, "오늘은 미세먼지도 좋고, 산불위험도 없고, 적정온도에 비도 안오는 등산하기 딱 좋은 조건이네요! 즐거운 등산하시길 바랄게요!"),
+    TODAY_OK("오늘", false, false, false, false, "오늘은 미세먼지도 좋고, 산불위험도 없고, 적정온도에 비도 안오는 등산하기 딱 좋은 조건이네요! 즐거운 등산하시길 바랄게요!"),
     TODAY_HOT("BID_DT_DAY.TODAY",
               true,
               false,
