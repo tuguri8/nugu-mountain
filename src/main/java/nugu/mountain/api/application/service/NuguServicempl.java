@@ -173,6 +173,7 @@ public class NuguServicempl implements NuguService {
         String resultConditionText = ClimbCondition.findByCondition(dayParameter, getTempCondition(dayParameter, summary), getAirCondition(air), getFireCondition(mountainFire), getSkyCondition(dayParameter, summary)).getResultText();
         Map<String, String> map = new HashMap<String, String>();
         map.put("resultConditionText", resultConditionText);
+        map.put("resultConditionTextDirect", resultConditionText);
         return sendToNugu(map);
     }
 
