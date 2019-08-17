@@ -27,32 +27,32 @@ public class NuguController {
         return nuguService.getMntInfoAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/course")
+    @PostMapping("/course**")
     public NuguResponse getMntCourseAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntCourseAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/air")
+    @PostMapping("/air**")
     public NuguResponse getMntAirAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntAirAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/weather")
+    @PostMapping("/weather**")
     public NuguResponse getMntWeatherAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntWeatherAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/fire")
+    @PostMapping("/fire**")
     public NuguResponse getMntFireAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntFireAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/tour")
+    @PostMapping("/tour**")
     public NuguResponse getMntTourInfoAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntTourInfoAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/transport")
+    @PostMapping("/transport**")
     public NuguResponse getMntTransportAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntTransportAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
@@ -62,12 +62,12 @@ public class NuguController {
         return nuguService.getMntHeightAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/reason")
+    @PostMapping("/reason**")
     public NuguResponse getMntReasonAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntReasonAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
-    @PostMapping("/overview")
+    @PostMapping("/overview**")
     public NuguResponse getMntOverviewAction(@RequestBody NuguRequest nuguRequest) throws IOException {
         return nuguService.getMntOverviewAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
