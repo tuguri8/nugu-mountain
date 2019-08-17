@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface MountainFireRepository extends JpaRepository<MountainFire, Long> {
-    Optional<MountainFire> findTopByAreaCodeOrderById(String areaCode);
+    Optional<MountainFire> findTopByAreaCodeOrderByIdDesc(String areaCode);
 }

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface AirRepository extends JpaRepository<Air, Long> {
-    Optional<Air> findTopByAreaCodeOrderById(String areaCode);
+    Optional<Air> findTopByAreaCodeOrderByIdDesc(String areaCode);
 }

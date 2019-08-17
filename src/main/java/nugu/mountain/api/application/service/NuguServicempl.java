@@ -72,7 +72,7 @@ public class NuguServicempl implements NuguService {
     @Override
     public NuguResponse getMntAirAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
-        Air air = airRepository.findTopByAreaCodeOrderById(mountain.getAreaCode())
+        Air air = airRepository.findTopByAreaCodeOrderByIdDesc(mountain.getAreaCode())
                                .orElseThrow(() -> new RuntimeException("미세먼지 정보가 존재하지 않습니다"));
         Map<String, String> map = new HashMap<String, String>();
         String airValue = air.getAirValue().toString();
@@ -110,7 +110,7 @@ public class NuguServicempl implements NuguService {
     @Override
     public NuguResponse getMntFireAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
-        MountainFire mountainFire = mountainFireRepository.findTopByAreaCodeOrderById(mountain.getAreaCode())
+        MountainFire mountainFire = mountainFireRepository.findTopByAreaCodeOrderByIdDesc(mountain.getAreaCode())
                                                           .orElseThrow(() -> new RuntimeException("산불 위험 정보가 존재하지 않습니다"));
         Map<String, String> map = new HashMap<String, String>();
         String fireValue = mountainFire.getMeanAvg();
