@@ -10,6 +10,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,7 @@ public class WeatherServicempl implements WeatherService {
     }
 
     @Override
+    @CacheEvict(value = "mntair", allEntries = true)
     @Scheduled(cron = "0 12 * * * *")
     public void syncAir() {
         AirkoreaResponse airkoreaResponse = airkoreaClient.getAir(key, "1", "1", "PM10", "HOUR", "WEEK");
@@ -92,5 +95,25 @@ public class WeatherServicempl implements WeatherService {
                                     LocalDateTime.parse(item.getDataTime(), dateTimeFormatter)).build());
         airRepository.saveAll(airList);
         log.info("미세먼지 저장 완료 : " + item.getDataTime() + " " + airList.size() + "개");
+    }
+
+    @Override
+    @Cacheable(value = "mntair", key = "#areaCode")
+    public Air getAirFromAreaCode(String areaCode) {
+        return airRepository.findTopByAreaCodeOrderByIdDesc(areaCode)
+                            .orElseThrow(() -> new RuntimeException("미세먼지 정보가 존재하지 않습니다"));
+    }
+
+    @Override
+    public String getAirGradeFromValue(Integer airValue) {
+        String grade = "낮음";
+        if (airValue > 150) {
+            grade = "매우나쁨";
+        } else if (airValue > 80) {
+            grade = "나쁨";
+        } else if (airValue > 30) {
+            grade = "보통";
+        }
+        return grade;
     }
 }

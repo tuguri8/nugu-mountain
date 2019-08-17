@@ -1,5 +1,6 @@
 package nugu.mountain.api.application.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import nugu.mountain.api.domain.entity.Area;
 import nugu.mountain.api.domain.entity.Mountain;
@@ -15,6 +16,8 @@ import nugu.mountain.api.infrastructure.sk.SkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -105,6 +108,7 @@ public class MountainServicempl implements MountainService {
     }
 
     @Override
+    @CacheEvict(value = "mntfire", allEntries = true)
     @Scheduled(cron = "0 20 * * * *")
     public void syncMountainFire() {
         List<String> areaList = Area.getAllAreaCode();
@@ -113,6 +117,19 @@ public class MountainServicempl implements MountainService {
                                                       .collect(Collectors.toList());
         mountainFireRepository.saveAll(mountainFireList);
         log.info("산불위험 DB 저장 완료 : " + mountainFireList.size() + " 개");
+    }
+
+    @Override
+    @Cacheable(value = "mntfire", key = "#areaCode")
+    public MountainFire getMountainFireFromAreaCode(String areaCode) {
+        return mountainFireRepository.findTopByAreaCodeOrderByIdDesc(areaCode)
+                                     .orElseThrow(() -> new RuntimeException("산불 위험 정보가 존재하지 않습니다"));
+    }
+
+    @Override
+    @Cacheable(value = "mntinfo", key = "#mntName")
+    public Mountain getMountainFromName(String mntName) {
+        return mountainRepository.findByMntName(mntName).orElseThrow(() -> new RuntimeException("해당 산이 존재하지 않습니다"));
     }
 
     private MountainFire getMountainFireRateFromArea(String areaCode) {

@@ -72,5 +72,10 @@ public class NuguController {
         return nuguService.getMntOverviewAction(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
+    @PostMapping("/condition**")
+    public NuguResponse getMntClimbingCondition(@RequestBody NuguRequest nuguRequest) throws IOException {
+        return nuguService.getMntClimbingCondition(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
+    }
+
 
 }
