@@ -105,7 +105,7 @@ public class MountainServicempl implements MountainService {
     }
 
     @Override
-    @Scheduled(cron = "0 5 17 * * *")
+    @Scheduled(cron = "0 15 17 * * *")
     public void syncMountainFire() {
         List<String> areaList = Area.getAllAreaCode();
         List<MountainFire> mountainFireList = areaList.stream()

@@ -33,7 +33,7 @@ public class WeatherServicempl implements WeatherService {
     }
 
     @Override
-    @Scheduled(cron = "0 36 16 * * *")
+    @Scheduled(cron = "* 23 * * * *")
     public void syncAir() {
         AirkoreaResponse airkoreaResponse = airkoreaClient.getAir(key, "1", "1", "PM10", "HOUR", "WEEK");
         List<Air> airList = Lists.newArrayList();
