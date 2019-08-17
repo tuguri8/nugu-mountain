@@ -21,20 +21,15 @@ import java.util.Map;
 @Service
 public class NuguServicempl implements NuguService {
 
-    @Value("${sk-client.key}")
-    String key;
-
     private final WeatherService weatherService;
     private final MountainService mountainService;
-    private final SkClient skClient;
 
     private static final Logger log = LoggerFactory.getLogger(NuguServicempl.class);
 
     public NuguServicempl(WeatherService weatherService,
-                          MountainService mountainService, SkClient skClient) {
+                          MountainService mountainService) {
         this.weatherService = weatherService;
         this.mountainService = mountainService;
-        this.skClient = skClient;
     }
 
     @Override
@@ -85,8 +80,7 @@ public class NuguServicempl implements NuguService {
     @Override
     public NuguResponse getMntWeatherAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = mountainService.getMountainFromName(parametersFromNuguRequest.get("mountain").get("value").asText());
-        WeatherSummaryResponse weatherSummaryResponse = skClient.getWeatherSummary(key, "2", mountain.getLat(), mountain.getLon());
-        WeatherSummaryResponse.Summary summary = weatherSummaryResponse.getWeather().getSummary().get(0);
+        WeatherSummaryResponse.Summary summary = weatherService.getWeatherSummary(mountain.getLat(), mountain.getLon());
 
         Map<String, String> map = new HashMap<String, String>();
         String weatherText = String.format("%s의 일기예보를 알려드릴게요!, 오늘의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다. 내일의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다.",
@@ -173,8 +167,13 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntClimbingCondition(JsonNode parametersFromNuguRequest) {
         Mountain mountain = mountainService.getMountainFromName(parametersFromNuguRequest.get("mountain").get("value").asText());
         String dayParameter = parametersFromNuguRequest.get("BID_DT_DAY").get("value").asText();
-
-        return null;
+        Air air = weatherService.getAirFromAreaCode(mountain.getAreaCode());
+        MountainFire mountainFire = mountainService.getMountainFireFromAreaCode(mountain.getAreaCode());
+        WeatherSummaryResponse.Summary summary = weatherService.getWeatherSummary(mountain.getLat(), mountain.getLon());
+        String resultConditionText = ClimbCondition.findByCondition(dayParameter, getTempCondition(dayParameter, summary), getAirCondition(air), getFireCondition(mountainFire), getSkyCondition(dayParameter, summary)).getResultText();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("resultConditionText", resultConditionText);
+        return sendToNugu(map);
     }
 
     private NuguResponse sendToNugu(Map<String, String> outputMap) {
@@ -183,5 +182,45 @@ public class NuguServicempl implements NuguService {
         nuguResponse.setResultCode("OK");
         nuguResponse.setOutput(outputMap);
         return nuguResponse;
+    }
+
+    private boolean getTempCondition(String dayParameter, WeatherSummaryResponse.Summary summary) {
+        String temp = "1";
+        switch (dayParameter) {
+            case "BID_DT_DAY.TODAY":
+                temp = summary.getToday().getTemperature().getTmax();
+                break;
+            case "BID_DT_DAY.TOMORROW":
+                temp = summary.getTomorrow().getTemperature().getTmax();
+                break;
+            case "BID_DT_DAY.A_TOMORROW":
+                temp = summary.getDayAfterTomorrow().getTemperature().getTmax();
+                break;
+        }
+        return Double.parseDouble(temp) >= 33;
+    }
+
+    private boolean getSkyCondition(String dayParameter, WeatherSummaryResponse.Summary summary) {
+        String skyName = "맑음";
+        switch (dayParameter) {
+            case "BID_DT_DAY.TODAY":
+                skyName = summary.getToday().getSky().getName();
+                break;
+            case "BID_DT_DAY.TOMORROW":
+                skyName = summary.getTomorrow().getSky().getName();
+                break;
+            case "BID_DT_DAY.A_TOMORROW":
+                skyName = summary.getDayAfterTomorrow().getSky().getName();
+                break;
+        }
+        return (skyName.equals("비") || skyName.equals("비 또는 눈"));
+    }
+
+    private boolean getAirCondition(Air air) {
+        return (air.getAirValue() > 80);
+    }
+
+    private boolean getFireCondition(MountainFire mountainFire) {
+        return (mountainFire.getGrade().equals("높음") || mountainFire.getGrade().equals("매우높음"));
     }
 }

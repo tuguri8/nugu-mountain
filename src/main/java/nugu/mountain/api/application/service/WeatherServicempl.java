@@ -6,6 +6,8 @@ import nugu.mountain.api.domain.entity.Area;
 import nugu.mountain.api.infrastructure.airkorea.AirkoreaClient;
 import nugu.mountain.api.infrastructure.airkorea.AirkoreaResponse;
 import nugu.mountain.api.infrastructure.repository.AirRepository;
+import nugu.mountain.api.infrastructure.sk.SkClient;
+import nugu.mountain.api.infrastructure.sk.dto.WeatherSummaryResponse;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +26,21 @@ public class WeatherServicempl implements WeatherService {
     @Value("${airkorea-client.key}")
     String key;
 
+    @Value("${sk-client.key}")
+    String skKey;
+
     private static final Logger log = LoggerFactory.getLogger(WeatherServicempl.class);
 
     private final AirkoreaClient airkoreaClient;
     private final AirRepository airRepository;
+    private final SkClient skClient;
 
-    public WeatherServicempl(AirkoreaClient airkoreaClient, AirRepository airRepository) {
+    public WeatherServicempl(AirkoreaClient airkoreaClient,
+                             AirRepository airRepository,
+                             SkClient skClient) {
         this.airkoreaClient = airkoreaClient;
         this.airRepository = airRepository;
+        this.skClient = skClient;
     }
 
     @Override
@@ -115,5 +124,11 @@ public class WeatherServicempl implements WeatherService {
             grade = "보통";
         }
         return grade;
+    }
+
+    @Override
+    public WeatherSummaryResponse.Summary getWeatherSummary(String lat, String lon) {
+        WeatherSummaryResponse weatherSummaryResponse = skClient.getWeatherSummary(skKey, "2", lat, lon);
+        return weatherSummaryResponse.getWeather().getSummary().get(0);
     }
 }
