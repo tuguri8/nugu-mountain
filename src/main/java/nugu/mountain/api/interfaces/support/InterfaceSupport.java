@@ -14,7 +14,6 @@ public class InterfaceSupport {
     private static final Logger log = LoggerFactory.getLogger(InterfaceSupport.class);
 
     public static JsonNode getParametersFromNuguRequest (NuguRequest nuguRequest) throws IOException {
-        log.info(nuguRequest.toString());
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readTree(objectMapper.writeValueAsString(nuguRequest.getAction().getParameters()));
     }
