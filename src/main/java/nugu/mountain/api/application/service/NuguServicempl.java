@@ -54,9 +54,8 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntInfoAction(JsonNode parameters) {
         Mountain mountain = getMountainFromParameters(parameters);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultText",
-                mountain.getSubName() + " " + mountain.getMntName() + "에 대해 궁금하시군요! 산 높이, 등산 코스 정보, 날씨, 미세먼지, 산불위험지수, 100대명산 선정이유, " +
-                    "대중교통정보, 주변관광정보, 산정보개관 중 어떤게 궁금하세요?");
+        map.put("resultSubName", mountain.getSubName());
+        map.put("resultMntName", mountain.getMntName());
         return sendToNugu(map);
     }
 
@@ -64,7 +63,9 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntCourseAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultCourse", mountain.getEtcCourse());
+        String mntCourse = mountain.getEtcCourse();
+        map.put("resultCourse", mntCourse);
+        map.put("resultCourseDirect", mntCourse);
         return sendToNugu(map);
     }
 
@@ -74,9 +75,15 @@ public class NuguServicempl implements NuguService {
         Air air = airRepository.findTopByAreaCodeOrderById(mountain.getAreaCode())
                                .orElseThrow(() -> new RuntimeException("미세먼지 정보가 존재하지 않습니다"));
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultAirValue", air.getAirValue().toString());
-        map.put("resultAirGrade", getAirGradeFromValue(air.getAirValue()));
-        map.put("resultAirDate", air.getDataTime().format(DateTimeFormatter.ofPattern("M월dd일 H시")));
+        String airValue = air.getAirValue().toString();
+        String airGrade = getAirGradeFromValue(air.getAirValue());
+        String airDate = air.getDataTime().format(DateTimeFormatter.ofPattern("M월dd일 H시"));
+        map.put("resultAirValue", airValue);
+        map.put("resultAirGrade", airGrade);
+        map.put("resultAirDate", airDate);
+        map.put("resultAirValueDirect", airValue);
+        map.put("resultAirGradeDirect", airGrade);
+        map.put("resultAirDateDirect", airDate);
         return sendToNugu(map);
     }
 
@@ -87,15 +94,16 @@ public class NuguServicempl implements NuguService {
         WeatherSummaryResponse.Summary summary = weatherSummaryResponse.getWeather().getSummary().get(0);
 
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultWeatherText",
-                String.format("%s의 일기예보를 알려드릴게요!, 오늘의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다. 내일의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다.",
-                              mountain.getMntName(),
-                              summary.getToday().getSky().getName(),
-                              summary.getToday().getTemperature().getTmax() + "도",
-                              summary.getToday().getTemperature().getTmin() + "도",
-                              summary.getTomorrow().getSky().getName(),
-                              summary.getTomorrow().getTemperature().getTmax() + "도",
-                              summary.getTomorrow().getTemperature().getTmin() + "도"));
+        String weatherText = String.format("%s의 일기예보를 알려드릴게요!, 오늘의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다. 내일의 기상은 %s, 최고기온은 %s, 최저기온은 %s 입니다.",
+                                           mountain.getMntName(),
+                                           summary.getToday().getSky().getName(),
+                                           summary.getToday().getTemperature().getTmax() + "도",
+                                           summary.getToday().getTemperature().getTmin() + "도",
+                                           summary.getTomorrow().getSky().getName(),
+                                           summary.getTomorrow().getTemperature().getTmax() + "도",
+                                           summary.getTomorrow().getTemperature().getTmin() + "도");
+        map.put("resultWeatherText", weatherText);
+        map.put("resultWeatherTextDirect", weatherText);
         return sendToNugu(map);
     }
 
@@ -105,9 +113,15 @@ public class NuguServicempl implements NuguService {
         MountainFire mountainFire = mountainFireRepository.findTopByAreaCodeOrderById(mountain.getAreaCode())
                                                           .orElseThrow(() -> new RuntimeException("산불 위험 정보가 존재하지 않습니다"));
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultFireValue", mountainFire.getMeanAvg());
-        map.put("resultFireGrade", mountainFire.getGrade());
-        map.put("resultFireDate", mountainFire.getAnalDate().format(DateTimeFormatter.ofPattern("M월dd일 H시")));
+        String fireValue = mountainFire.getMeanAvg();
+        String fireGrade = mountainFire.getGrade();
+        String fireDate = mountainFire.getAnalDate().format(DateTimeFormatter.ofPattern("M월dd일 H시"));
+        map.put("resultFireValue", fireValue);
+        map.put("resultFireGrade", fireGrade);
+        map.put("resultFireDate", fireDate);
+        map.put("resultFireValueDirect", fireValue);
+        map.put("resultFireGradeDirect", fireGrade);
+        map.put("resultFireDateDirect", fireDate);
         return sendToNugu(map);
     }
 
@@ -115,7 +129,9 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntTourInfoAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultTour", mountain.getTourismInfo());
+        String mntTourInfo = mountain.getTourismInfo();
+        map.put("resultTour", mntTourInfo);
+        map.put("resultTourDirect", mntTourInfo);
         return sendToNugu(map);
     }
 
@@ -123,7 +139,9 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntTransportAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultTransport", mountain.getTransport());
+        String mntTransportInfo = mountain.getTransport();
+        map.put("resultTransport", mntTransportInfo);
+        map.put("resultTransportDirect", mntTransportInfo);
         return sendToNugu(map);
     }
 
@@ -131,7 +149,9 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntHeightAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultHeight", String.valueOf(mountain.getMntHeight()));
+        String mntHeightInfo = String.valueOf(mountain.getMntHeight());
+        map.put("resultHeight", mntHeightInfo);
+        map.put("resultHeightDirect", mntHeightInfo);
         return sendToNugu(map);
     }
 
@@ -139,7 +159,9 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntReasonAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultReason", mountain.getReason());
+        String mntReasonInfo = mountain.getReason();
+        map.put("resultReason", mntReasonInfo);
+        map.put("resultReasonDirect", mntReasonInfo);
         return sendToNugu(map);
     }
 
@@ -147,7 +169,9 @@ public class NuguServicempl implements NuguService {
     public NuguResponse getMntOverviewAction(JsonNode parametersFromNuguRequest) {
         Mountain mountain = getMountainFromParameters(parametersFromNuguRequest);
         Map<String, String> map = new HashMap<String, String>();
-        map.put("resultOverview", mountain.getReason());
+        String mntOverviewInfo = mountain.getReason();
+        map.put("resultOverview", mntOverviewInfo);
+        map.put("resultOverviewDirect", mntOverviewInfo);
         return sendToNugu(map);
     }
 
