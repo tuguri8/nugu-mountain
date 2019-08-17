@@ -166,7 +166,7 @@ public class NuguServicempl implements NuguService {
     @Override
     public NuguResponse getMntClimbingCondition(JsonNode parametersFromNuguRequest) {
         Mountain mountain = mountainService.getMountainFromName(parametersFromNuguRequest.get("mountain").get("value").asText());
-        log.info(parametersFromNuguRequest.get("BID_DT_DAY").asText());
+        log.info("로그 " + parametersFromNuguRequest.asText());
         String dayParameter = parametersFromNuguRequest.get("BID_DT_DAY").get("type").asText();
         Air air = weatherService.getAirFromAreaCode(mountain.getAreaCode());
         MountainFire mountainFire = mountainService.getMountainFireFromAreaCode(mountain.getAreaCode());
