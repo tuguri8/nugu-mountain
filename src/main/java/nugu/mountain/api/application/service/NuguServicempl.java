@@ -183,7 +183,7 @@ public class NuguServicempl implements NuguService {
 
     @Override
     public NuguResponse recommendMnt(JsonNode parametersFromNuguRequest) {
-        String dayParameter = parametersFromNuguRequest.get("day").get("value").asText();
+        String dayParameter = parametersFromNuguRequest.get("recommendDay").get("value").asText();
         List<String> mntList = ListUtils.union(weatherService.getFreshAreaCode(), mountainService.getSafeAreaCodeFromFire())
                                         .stream()
                                         .distinct()
