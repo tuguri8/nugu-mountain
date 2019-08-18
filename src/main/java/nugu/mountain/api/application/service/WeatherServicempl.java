@@ -8,6 +8,7 @@ import nugu.mountain.api.infrastructure.airkorea.AirkoreaResponse;
 import nugu.mountain.api.infrastructure.repository.AirRepository;
 import nugu.mountain.api.infrastructure.sk.SkClient;
 import nugu.mountain.api.infrastructure.sk.dto.WeatherSummaryResponse;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WeatherServicempl implements WeatherService {
@@ -130,5 +133,14 @@ public class WeatherServicempl implements WeatherService {
     public WeatherSummaryResponse.Summary getWeatherSummary(String lat, String lon) {
         WeatherSummaryResponse weatherSummaryResponse = skClient.getWeatherSummary(skKey, "2", lat, lon);
         return weatherSummaryResponse.getWeather().getSummary().get(0);
+    }
+
+    @Override
+    public List<String> getFreshAreaCode() {
+        List<Air> airList = airRepository.findTop17ByOrderByIdDesc().orElse(Collections.EMPTY_LIST);
+        return airList.stream()
+                      .filter(air -> air.getAirValue() < 80)
+                      .map(Air::getAreaCode)
+                      .collect(Collectors.toList());
     }
 }

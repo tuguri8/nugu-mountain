@@ -4,19 +4,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import nugu.mountain.api.domain.entity.Air;
 import nugu.mountain.api.domain.entity.Mountain;
 import nugu.mountain.api.domain.entity.MountainFire;
-import nugu.mountain.api.infrastructure.repository.MountainFireRepository;
-import nugu.mountain.api.infrastructure.repository.MountainRepository;
-import nugu.mountain.api.infrastructure.sk.SkClient;
 import nugu.mountain.api.infrastructure.sk.dto.WeatherSummaryResponse;
 import nugu.mountain.api.interfaces.dto.response.NuguResponse;
+import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class NuguServicempl implements NuguService {
@@ -170,11 +170,49 @@ public class NuguServicempl implements NuguService {
         Air air = weatherService.getAirFromAreaCode(mountain.getAreaCode());
         MountainFire mountainFire = mountainService.getMountainFireFromAreaCode(mountain.getAreaCode());
         WeatherSummaryResponse.Summary summary = weatherService.getWeatherSummary(mountain.getLat(), mountain.getLon());
-        String resultConditionText = ClimbCondition.findByCondition(dayParameter, getTempCondition(dayParameter, summary), getAirCondition(air), getFireCondition(mountainFire), getSkyCondition(dayParameter, summary)).getResultText();
+        String resultConditionText = ClimbCondition.findByCondition(dayParameter,
+                                                                    getTempCondition(dayParameter, summary),
+                                                                    getAirCondition(air),
+                                                                    getFireCondition(mountainFire),
+                                                                    getSkyCondition(dayParameter, summary)).getResultText();
         Map<String, String> map = new HashMap<String, String>();
         map.put("resultConditionText", resultConditionText);
         map.put("resultConditionTextDirect", resultConditionText);
         return sendToNugu(map);
+    }
+
+    @Override
+    public NuguResponse recommendMnt(JsonNode parametersFromNuguRequest) {
+        String dayParameter = parametersFromNuguRequest.get("day").get("value").asText();
+        List<String> mntList = ListUtils.union(weatherService.getFreshAreaCode(), mountainService.getSafeAreaCodeFromFire())
+                                        .stream()
+                                        .distinct()
+                                        .collect(Collectors.toList());
+        Collections.shuffle(mntList);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("resultCommendMnt", String.format("%s 갈 산을 찾고 계시군요? 아쉽지만 다음에 가는건 어떠세요? 안타깝게도 적당한 산이 없네요.", dayParameter));
+        log.info(mntList.toString());
+        for (String area : mntList) {
+            List<Mountain> safeMountainList = mountainService.getMountainAreaCode(area);
+            if (safeMountainList.isEmpty()) { continue; }
+            Collections.shuffle(safeMountainList);
+            log.info(safeMountainList.get(0).getMntName());
+            if (okToClimbFromAreaCode(dayParameter, safeMountainList.get(0))) {
+                map.put("resultCommendMnt",
+                        String.format("%s 갈 산을 추천해드릴게요! 산불 위험도 없고, 날씨도 좋은 %s, %s를 추천해드릴게요! %s의 다른 정보를 알고 싶으시면 다시 물어봐주세요!",
+                                      dayParameter,
+                                      safeMountainList.get(0).getSubName(),
+                                      safeMountainList.get(0).getMntName(),
+                                      safeMountainList.get(0).getMntName()));
+                break;
+            }
+        }
+        return sendToNugu(map);
+    }
+
+    private boolean okToClimbFromAreaCode(String dayParameter, Mountain mountain) {
+        WeatherSummaryResponse.Summary summary = weatherService.getWeatherSummary(mountain.getLat(), mountain.getLon());
+        return !getTempCondition(dayParameter, summary) && !getSkyCondition(dayParameter, summary);
     }
 
     private NuguResponse sendToNugu(Map<String, String> outputMap) {

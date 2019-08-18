@@ -30,4 +30,7 @@ public interface NuguService {
     NuguResponse getMntOverviewAction(JsonNode parametersFromNuguRequest);
 
     NuguResponse getMntClimbingCondition(JsonNode parametersFromNuguRequest);
+
+    NuguResponse recommendMnt(JsonNode parametersFromNuguRequest);
+
 }

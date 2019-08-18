@@ -13,6 +13,7 @@ import nugu.mountain.api.infrastructure.repository.MountainFireRepository;
 import nugu.mountain.api.infrastructure.repository.MountainRepository;
 import nugu.mountain.api.infrastructure.sk.dto.GeocodingResponse;
 import nugu.mountain.api.infrastructure.sk.SkClient;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -130,6 +132,22 @@ public class MountainServicempl implements MountainService {
     @Cacheable(value = "mntinfo", key = "#mntName")
     public Mountain getMountainFromName(String mntName) {
         return mountainRepository.findByMntName(mntName).orElseThrow(() -> new RuntimeException("해당 산이 존재하지 않습니다"));
+    }
+
+    @Override
+    @Cacheable(value = "areamntinfo", key = "#areaCode")
+    public List<Mountain> getMountainAreaCode(String areaCode) {
+        return mountainRepository.findAllByAreaCode(areaCode).orElse(Collections.EMPTY_LIST);
+    }
+
+    @Override
+    public List<String> getSafeAreaCodeFromFire() {
+        List<MountainFire> mountainFireList = mountainFireRepository.findTop18ByOrderByIdDesc().orElse(Collections.EMPTY_LIST);
+        return mountainFireList.stream()
+                      .filter(mountainFire -> mountainFire.getGrade().equals("보통") || mountainFire.getGrade().equals("낮음"))
+                      .filter(mountainFire -> mountainFire.getAreaCode() != null)
+                      .map(MountainFire::getAreaCode)
+                      .collect(Collectors.toList());
     }
 
     private MountainFire getMountainFireRateFromArea(String areaCode) {

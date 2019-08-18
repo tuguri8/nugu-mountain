@@ -5,6 +5,8 @@ import nugu.mountain.api.domain.entity.Mountain;
 import nugu.mountain.api.domain.entity.MountainFire;
 import nugu.mountain.api.infrastructure.mountain.MountainResponse;
 
+import java.util.List;
+
 public interface MountainService {
     void getMountain();
 
@@ -15,4 +17,8 @@ public interface MountainService {
     MountainFire getMountainFireFromAreaCode(String areaCode);
 
     Mountain getMountainFromName(String mntName);
+
+    List<Mountain> getMountainAreaCode(String areaCode);
+
+    List<String> getSafeAreaCodeFromFire();
 }

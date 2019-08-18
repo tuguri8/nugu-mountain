@@ -77,5 +77,10 @@ public class NuguController {
         return nuguService.getMntClimbingCondition(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
     }
 
+    @PostMapping("/recommend")
+    public NuguResponse recommendMnt(@RequestBody NuguRequest nuguRequest) throws IOException {
+        return nuguService.recommendMnt(InterfaceSupport.getParametersFromNuguRequest(nuguRequest));
+    }
+
 
 }
