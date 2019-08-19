@@ -1,5 +1,6 @@
 package nugu.mountain.api.application.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import nugu.mountain.api.domain.entity.Area;
 import nugu.mountain.api.domain.entity.Mountain;
@@ -12,15 +13,19 @@ import nugu.mountain.api.infrastructure.repository.MountainFireRepository;
 import nugu.mountain.api.infrastructure.repository.MountainRepository;
 import nugu.mountain.api.infrastructure.sk.dto.GeocodingResponse;
 import nugu.mountain.api.infrastructure.sk.SkClient;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,7 +110,8 @@ public class MountainServicempl implements MountainService {
     }
 
     @Override
-    @Scheduled(cron = "0 5 17 * * *")
+    @CacheEvict(value = "mntfire", allEntries = true)
+    @Scheduled(cron = "0 20 * * * *")
     public void syncMountainFire() {
         List<String> areaList = Area.getAllAreaCode();
         List<MountainFire> mountainFireList = areaList.stream()
@@ -113,6 +119,35 @@ public class MountainServicempl implements MountainService {
                                                       .collect(Collectors.toList());
         mountainFireRepository.saveAll(mountainFireList);
         log.info("산불위험 DB 저장 완료 : " + mountainFireList.size() + " 개");
+    }
+
+    @Override
+    @Cacheable(value = "mntfire", key = "#areaCode")
+    public MountainFire getMountainFireFromAreaCode(String areaCode) {
+        return mountainFireRepository.findTopByAreaCodeOrderByIdDesc(areaCode)
+                                     .orElseThrow(() -> new RuntimeException("산불 위험 정보가 존재하지 않습니다"));
+    }
+
+    @Override
+    @Cacheable(value = "mntinfo", key = "#mntName")
+    public Mountain getMountainFromName(String mntName) {
+        return mountainRepository.findByMntName(mntName).orElseThrow(() -> new RuntimeException("해당 산이 존재하지 않습니다"));
+    }
+
+    @Override
+    @Cacheable(value = "areamntinfo", key = "#areaCode")
+    public List<Mountain> getMountainAreaCode(String areaCode) {
+        return mountainRepository.findAllByAreaCode(areaCode).orElse(Collections.EMPTY_LIST);
+    }
+
+    @Override
+    public List<String> getSafeAreaCodeFromFire() {
+        List<MountainFire> mountainFireList = mountainFireRepository.findTop18ByOrderByIdDesc().orElse(Collections.EMPTY_LIST);
+        return mountainFireList.stream()
+                      .filter(mountainFire -> mountainFire.getGrade().equals("보통") || mountainFire.getGrade().equals("낮음"))
+                      .filter(mountainFire -> mountainFire.getAreaCode() != null)
+                      .map(MountainFire::getAreaCode)
+                      .collect(Collectors.toList());
     }
 
     private MountainFire getMountainFireRateFromArea(String areaCode) {

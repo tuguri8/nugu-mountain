@@ -6,34 +6,49 @@ import nugu.mountain.api.domain.entity.Area;
 import nugu.mountain.api.infrastructure.airkorea.AirkoreaClient;
 import nugu.mountain.api.infrastructure.airkorea.AirkoreaResponse;
 import nugu.mountain.api.infrastructure.repository.AirRepository;
+import nugu.mountain.api.infrastructure.sk.SkClient;
+import nugu.mountain.api.infrastructure.sk.dto.WeatherSummaryResponse;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WeatherServicempl implements WeatherService {
     @Value("${airkorea-client.key}")
     String key;
 
+    @Value("${sk-client.key}")
+    String skKey;
+
     private static final Logger log = LoggerFactory.getLogger(WeatherServicempl.class);
 
     private final AirkoreaClient airkoreaClient;
     private final AirRepository airRepository;
+    private final SkClient skClient;
 
-    public WeatherServicempl(AirkoreaClient airkoreaClient, AirRepository airRepository) {
+    public WeatherServicempl(AirkoreaClient airkoreaClient,
+                             AirRepository airRepository,
+                             SkClient skClient) {
         this.airkoreaClient = airkoreaClient;
         this.airRepository = airRepository;
+        this.skClient = skClient;
     }
 
     @Override
-    @Scheduled(cron = "0 36 16 * * *")
+    @CacheEvict(value = "mntair", allEntries = true)
+    @Scheduled(cron = "0 12 * * * *")
     public void syncAir() {
         AirkoreaResponse airkoreaResponse = airkoreaClient.getAir(key, "1", "1", "PM10", "HOUR", "WEEK");
         List<Air> airList = Lists.newArrayList();
@@ -92,5 +107,40 @@ public class WeatherServicempl implements WeatherService {
                                     LocalDateTime.parse(item.getDataTime(), dateTimeFormatter)).build());
         airRepository.saveAll(airList);
         log.info("미세먼지 저장 완료 : " + item.getDataTime() + " " + airList.size() + "개");
+    }
+
+    @Override
+    @Cacheable(value = "mntair", key = "#areaCode")
+    public Air getAirFromAreaCode(String areaCode) {
+        return airRepository.findTopByAreaCodeOrderByIdDesc(areaCode)
+                            .orElseThrow(() -> new RuntimeException("미세먼지 정보가 존재하지 않습니다"));
+    }
+
+    @Override
+    public String getAirGradeFromValue(Integer airValue) {
+        String grade = "낮음";
+        if (airValue > 150) {
+            grade = "매우나쁨";
+        } else if (airValue > 80) {
+            grade = "나쁨";
+        } else if (airValue > 30) {
+            grade = "보통";
+        }
+        return grade;
+    }
+
+    @Override
+    public WeatherSummaryResponse.Summary getWeatherSummary(String lat, String lon) {
+        WeatherSummaryResponse weatherSummaryResponse = skClient.getWeatherSummary(skKey, "2", lat, lon);
+        return weatherSummaryResponse.getWeather().getSummary().get(0);
+    }
+
+    @Override
+    public List<String> getFreshAreaCode() {
+        List<Air> airList = airRepository.findTop17ByOrderByIdDesc().orElse(Collections.EMPTY_LIST);
+        return airList.stream()
+                      .filter(air -> air.getAirValue() < 80)
+                      .map(Air::getAreaCode)
+                      .collect(Collectors.toList());
     }
 }
