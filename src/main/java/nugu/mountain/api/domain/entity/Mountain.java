@@ -1,14 +1,17 @@
 package nugu.mountain.api.domain.entity;
 
+import nugu.mountain.api.domain.common.BaseEntity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.io.Serializable;
 
 @Entity
-public class Mountain {
+public class Mountain extends BaseEntity implements Serializable {
     private static final long serialVersionUID = -14238791237843141L;
 
     @Id
@@ -21,11 +24,17 @@ public class Mountain {
     @Column(name = "MNT_NAME")
     private String mntName;
 
-    @Column(name = "MNT_HEIGHT")
-    private Integer mntHeight;
+    @Column(name = "SUB_NAME")
+    private String subName;
 
     @Column(name = "MNT_AREA")
     private String mntArea;
+
+    @Column(name = "AREA_CODE")
+    private String areaCode;
+
+    @Column(name = "MNT_HEIGHT")
+    private Integer mntHeight;
 
     @Lob
     @Column(name = "REASON")
@@ -47,4 +56,137 @@ public class Mountain {
     @Column(name = "TOURISM_INFO")
     private String tourismInfo;
 
+    @Lob
+    @Column(name = "ETC_COURSE")
+    private String etcCourse;
+
+    @Column(name = "LAT")
+    private String lat;
+
+    @Column(name = "LON")
+    private String lon;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getMntCode() {
+        return mntCode;
+    }
+
+    public void setMntCode(Long mntCode) {
+        this.mntCode = mntCode;
+    }
+
+    public String getMntName() {
+        return mntName;
+    }
+
+    public void setMntName(String mntName) {
+        this.mntName = mntName;
+    }
+
+    public String getSubName() {
+        return subName;
+    }
+
+    public void setSubName(String subName) {
+        this.subName = subName;
+    }
+
+    public String getMntArea() {
+        return mntArea;
+    }
+
+    public void setMntArea(String mntArea) {
+        this.mntArea = mntArea;
+    }
+
+    public Integer getMntHeight() {
+        return mntHeight;
+    }
+
+    public void setMntHeight(Integer mntHeight) {
+        this.mntHeight = mntHeight;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public String getTransport() {
+        return transport;
+    }
+
+    public void setTransport(String transport) {
+        this.transport = transport;
+    }
+
+    public String getTourismInfo() {
+        return tourismInfo;
+    }
+
+    public void setTourismInfo(String tourismInfo) {
+        this.tourismInfo = tourismInfo;
+    }
+
+    public String getEtcCourse() {
+        return etcCourse;
+    }
+
+    public void setEtcCourse(String etcCourse) {
+        this.etcCourse = etcCourse;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
+
+    public String getAreaCode() {
+        return areaCode;
+    }
+
+    public void setAreaCode(String areaCode) {
+        this.areaCode = areaCode;
+    }
 }
